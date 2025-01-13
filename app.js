@@ -1,38 +1,29 @@
-/*==========================================================
- * require('express') : Express 모듈을 불러온다.
- * express() : Express 앱 객체를 생성한다.
- * app-get : 특정 경로에 대해 요청-응답 동작을 정의한다.
- * app.listen : 지정된 포트에서 서버를 시작하고 요청을 수신한다.
- ==========================================================*/
-
-
-// Express 모듈을 가져온다.
-const express = require('express')
-
-// Express 애플리케이션 객체를 생성한다.
+const express = require('express') // Express 모듈을 가져온다.
+const ejs = require('ejs') // EJS 템플릿 엔진 모듈을 가져온다
 const app = express()
-const port = 3000
+const port = 3000 // 서버가 실행될 포트 번호를 지정한다.
 
-// HTTP GET 요청이 '/' 경로로 들어왔을 때 실행될 라우트를 정의한다.
-// 클라이언트가 '/' 경로로 요청을 보내면
-app.get('/', (req, res) => { // function 대신 => 사용
-    console.log('Got a GET request from Client')
-    res.send('Hello World') // 클라이언트에게 "Hello World"라는 응답을 보낸다.
+
+// Express에 EJS를 뷰 엔진(view engine)으로 설정한다.
+// 이를 통해 .ejs 파일을 렌더링할 수 있다.
+app.set('view engine', 'ejs')
+// 뷰 파일(템플릿 파일)이 위치한 디렉토리를 설정한다.
+// './views' 디렉토리에서 .ejs 파일을 찾는다.
+app.set('viess', './views')
+
+// 루트 경로('/')로 들어오는 HTTP GET 요청을 처리한다.
+app.get('/', (req, res) => { 
+    // 렌더링한 index.ejs 를 반환 (문자열(파일명)만 넣어도 index.d.ts 파일에서 확장자를 붙여서 return 해줌)
+    // index.ejs 라고 써도 상관없음
+    res.render('index'); 
 })
 
-app.post('/', (req, res) => {
-    console.log('Got a POST request from Client')
-    res.send('Hello World')
+app.get('/blog', (req, res) => { 
+    res.render('blog.ejs');
 })
 
-app.put('/user', (req, res) => {
-    console.log('Got a PUT request from Client')
-    res.send('Hello World')
-})
-
-app.delete('/user', (req, res) => {
-    console.log('Got a DELETE request from Client')
-    res.send('Hello World')
+app.get('/users', (req, res) => { 
+    res.render('users');
 })
 
 // 서버를 3000번 포트에서 실행한다.
