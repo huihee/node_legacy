@@ -15,9 +15,9 @@ const port = 3000
 
 // HTTP GET 요청이 '/' 경로로 들어왔을 때 실행될 라우트를 정의한다.
 // 클라이언트가 '/' 경로로 요청을 보내면
-app.get('/', (req, res) => { // 
+app.get('/', (req, res) => { // function 대신 => 사용
     console.log('Got a GET request from Client')
-    res.send('<H1>Hello</H1>') // 클라이언트에게 "Hello World"라는 응답을 보낸다.
+    res.send('Hello World') // 클라이언트에게 "Hello World"라는 응답을 보낸다.
 })
 
 app.post('/', (req, res) => {
