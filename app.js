@@ -71,16 +71,31 @@ app.post('/api/contact', (req, res) => {
                       VALUES('${name}', '${phone}', '${email}', '${memo}', NOW(), NOW())`
 
     connectionPool.query(SQL_Query, (err, result) => {
-    if (err) {
-        console.error('데이터 삽입 중 에러 발생', errr1)
-        res.status(500).send('내부 서버 오류')
-    } else {
-        console.log('데이터가 삽입되었습니다.');
-        res.send("<script>alert('문의사항이 등록되었습니다.'); location.href='/';</script>"); // 인라인 코딩 금지 (지금만 예외,,)
-    }
-})
+        if (err) {
+            console.error('데이터 삽입 중 에러 발생', err)
+            res.status(500).send('내부 서버 오류')
+        } else {
+            console.log('데이터가 삽입되었습니다.');
+            res.send("<script>alert('문의사항이 등록되었습니다.'); location.href='/';</script>"); // 인라인 코딩 금지 (지금만 예외,,)
+        }
+    })
 })
 
+// 조회
+app.get('/contactList', (req, res) => {
+   const selectQuery = `SELECT * FROM contact ORDER BY ID DESC`
+
+   connectionPool.query(selectQuery, (err, result) => {
+        if (err) {
+            console.error('데이터 조회 중 에러 발생', err)
+            res.status(500).send('내부 서버 오류')
+        } else {
+            console.log('데이터가 조회되었습니다.');
+            console.log(result);
+            res.render('contactList', {lists:result});
+        }
+    })
+})
 
 app.listen(port, () => {
     console.log(`Node Legacy App listening on port ${port}`)
