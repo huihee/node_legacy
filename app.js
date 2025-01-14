@@ -1,4 +1,4 @@
-const express = require('express').
+const express = require('express')
 const ejs = require('ejs')
 const app = express()
 const port = 3000
@@ -18,6 +18,10 @@ app.get('/blog', (req, res) => {
 
 app.get('/users', (req, res) => { 
     res.render('users');
+})
+
+app.get('/contact', (req, res) => { 
+    res.render('contact');
 })
 
 app.post('/api/contact', (req, res) => {
