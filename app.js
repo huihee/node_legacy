@@ -11,6 +11,10 @@ app.set('view engine', 'ejs')
 // './views' 디렉토리에서 .ejs 파일을 찾는다.
 app.set('viess', './views')
 
+// static file serving
+// __dirname : 현재 경로 (app.js 기준)
+app.use(express.static(__dirname+'/public'))
+
 // 루트 경로('/')로 들어오는 HTTP GET 요청을 처리한다.
 app.get('/', (req, res) => { 
     // 렌더링한 index.ejs 를 반환 (문자열(파일명)만 넣어도 index.d.ts 파일에서 확장자를 붙여서 return 해줌)
