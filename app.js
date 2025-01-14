@@ -3,6 +3,7 @@ const express = require('express')
 const ejs = require('ejs')
 const bodyParser = require('body-parser');
 const mysql = require('mysql2')
+require('dotenv').config();
 const app = express()
 const port = 3000
 
@@ -14,6 +15,18 @@ app.use(express.static(__dirname+'/public'))
 app.use(bodyParser.urlencoded({ extended: false })) // bodyParser가 해당 형식을 파싱해줌
 // parsing JSON
 app.use(bodyParser.json()) // bodyParser가 해당 형식을 파싱해줌
+
+
+// MySQL Connection - push 절대 금지에 유의(dotenv사용)
+const connection = mysql.createConnection({
+    host: process.env.DB_HOST, // 로컬에 구축했기 때문에
+    user: process.env.DB_USER, // root로 접속
+    passward: process.env.DB_PW,
+    port : DB_PORT, // mysql 설치시 설정된 포트
+    database: process.env.DB_NAME,
+    insecureAuth: true,
+});
+
 
 app.get('/', (req, res) => { 
     res.render('index'); 
