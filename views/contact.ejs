@@ -1,7 +1,8 @@
 <%-include('layouts/header.ejs')%>
 
 <h2>문의하기</h2>
-<form action="qpi/contact" method="post">
+<!-- 해당 엔드포인트(api/contact)로 post 요청을 보냄 -->
+<form action="api/contact" method="post">
     <ul>
         <li>이름 : <input type="text" name="name" required></li>
         <li>연락처 : <input type="text" name="phone" required></li>
