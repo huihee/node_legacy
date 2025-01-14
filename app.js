@@ -19,7 +19,7 @@ app.use(bodyParser.json()) // bodyParser가 해당 형식을 파싱해줌
 
 // MySQL Connection Pool - db 관련 정보는 push 절대 금지에 유의(dotenv사용)
 // MySQL 커넥션을 사용할 때는, 주로 커넥션 풀을 이용하여 관리하는 것이 권장된다.
-const connection = mysql.createPool({
+const connectionPool = mysql.createPool({
     host: process.env.DB_HOST, // 로컬에 구축했기 때문에
     user: process.env.DB_USER, // root로 접속
     password: process.env.DB_PW,
