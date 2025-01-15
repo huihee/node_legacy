@@ -39,22 +39,25 @@
         <% }) %> <!-- ejs문법 -->
     </table>
     
+    <!-- form 태그가 get, post만 지원하므로 따로 function 만들어서 사용 -->
     <script>
-        function updateContact(contactId) {
-            // AJAX를 사용하여 PUT 요청 보내기
-            $.ajax({
-                url: `/api/contactUpdate/${contactId}`, 
-                type: 'PUT',
-                success: function(response) {
-                    // 수정 성공 시
-                    alert("문의사항의 상태가 변경되었습니다.")
-                    location.reload(); // 새로고침
-                },
-                error: function(error) {
-                    // 오류 처리
-                    console.error("업데이트 오류 : ", error)
+        async function updateContact(contactId) {
+            try {
+                const response = await fetch(`/api/contactUpdate/${contactId}`, {
+                    method: 'PUT', // HTTP Method
+                    headers: {
+                        'Content-Type': 'application/json' // Data Type
+                    }
+                    // Body : data...
+                });
+                if (!response.ok) {
+                    throw new Error('업데이트 오류'); // 오류 발생 시 오류 각체를 catch로 전달
                 }
-            })
+                alert('문의사항이 업데이트되었습니다.');
+                location.reload();
+            } catch (error) {
+                console.error('업데이트 오류:', error); // 전달받은 오류 처리
+            }
         }
 
         function deleteContact(contactId) {
