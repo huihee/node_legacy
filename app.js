@@ -95,7 +95,25 @@ app.get('/contactList', (req, res) => {
             res.render('contactList', {lists:result});
         }
     })
+});
+
+app.post('/api/contactDelete/:id', (req, res) => {
+    const id = req.params.id;
+    const deleteQuery = `DELETE FROM CONTACT WHERE ID='${id}'`
+    connectionPool.query(deleteQuery, (err, result) => {
+        if (err) {
+            console.error('데이터 삭제 중 에러 발생', err)
+            res.status(500).send('내부 서버 오류')
+        } else {
+            console.log('데이터가 삭제되었습니다.');
+            console.log(result);
+            res.send("<script>alert('문의사항이 삭제되었습니다.'); location.href='/';</script>"); // 인라인 코딩 금지 (지금만 예외,,)
+        }
+    })
 })
+// www.blog.naver.com/posts/1
+// www.blog.naver.com/posts?id=1
+
 
 app.listen(port, () => {
     console.log(`Node Legacy App listening on port ${port}`)
