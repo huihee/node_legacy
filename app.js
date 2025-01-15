@@ -40,9 +40,30 @@ connectionPool.getConnection((err, connection) => {
 });
 
 
-app.get('/', (req, res) => { 
-    res.render('index'); 
-})
+app.get('/', (req, res) => {
+    const selectQuery = `SELECT id,
+                                name,
+                                phone,
+                                email,
+                                memo,
+                                DATE_FORMAT(create_at, '%Y-%m-%d') AS create_at,
+                                DATE_FORMAT(modify_at, '%Y-%m-%d') AS modify_at,
+                                status 
+                            FROM contact 
+                            ORDER BY ID DESC`;
+  
+    connectionPool.query(selectQuery, (err, result) => {
+      if (err) {
+        console.error('데이터 조회 중 에러 발생', err);
+        res.status(500).send('내부 서버 오류');
+      } else {
+        console.log('데이터가 조회되었습니다.');
+        // 'index.ejs'로 데이터 전달
+        res.render('index', { lists: result });
+      }
+    });
+  });
+  
 
 app.get('/blog', (req, res) => { 
     res.render('blog.ejs');
@@ -83,9 +104,18 @@ app.post('/api/contact', (req, res) => {
 
 // 조회
 app.get('/contactList', (req, res) => {
-   const selectQuery = `SELECT * FROM contact ORDER BY ID DESC`
+    const selectQuery = `SELECT id,
+                                name,
+                                phone,
+                                email,
+                                memo,
+                                DATE_FORMAT(create_at, '%Y-%m-%d') AS create_at,
+                                DATE_FORMAT(modify_at, '%Y-%m-%d') AS modify_at,
+                                status 
+                            FROM contact 
+                            ORDER BY ID DESC`;
 
-   connectionPool.query(selectQuery, (err, result) => {
+    connectionPool.query(selectQuery, (err, result) => {
         if (err) {
             console.error('데이터 조회 중 에러 발생', err)
             res.status(500).send('내부 서버 오류')

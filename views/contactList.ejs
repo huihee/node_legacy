@@ -23,14 +23,11 @@
             <td><%=item.phone%></td>
             <td><%=item.email%></td>
             <td><%=item.memo%></td>
-            <td><%=item.status%></td>
-            <td><%=item.create_at%></td>
-            <td><%=item.modify_at%></td>
+            <td class="center"><%= item.status %></td>
+            <td class="center"><%= item.create_at %></td>
+            <td class="center"><%= item.modify_at %></td>
             <td>
                 <button type="button" onclick="updateContact(<%=item.id%>)"> UPDATE </button>
-                <!-- <%= %> 표현식 관련 Expression express 오류 관련 (아래처럼 수정 가능) -->
-                <!-- <button type="button" data-id="<%= item.id %>" onclick="updateContact(this.dataset.id)"> UPDATE </button> -->  <!-- 방법1 -->
-                <!-- <button type="button" data-contactId="<%= item.id %>" onclick="updateContact(this.dataset.contactId)"> UPDATE </button>--> <!-- 방법2 --> 
             </td>
             <td>
                 <button type="button" onclick="deleteContact(<%=item.id%>)"> DELETE </button>
