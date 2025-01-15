@@ -115,7 +115,7 @@ app.post('/api/contactDelete/:id', (req, res) => {
 app.post('/api/contactUpdate/:id', (req, res) => {
     const id = req.params.id;
     const status = "done";
-    const updateQuery = `UPDATE contact SET status = '${status}' WHERE id = '${id}'`
+    const updateQuery = `UPDATE contact SET status='${status}' WHERE id='${id}'`
 
     connectionPool.query(updateQuery, (err, result) => {
         if (err) {
