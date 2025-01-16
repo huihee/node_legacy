@@ -209,9 +209,6 @@ tr.done {
 
 /* 라벨 스타일 */
 .status-filter-label {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
   flex-shrink: 0; /* 라벨이 크기를 유지하도록 설정 */
   width: 100px; /* 라벨의 고정 너비 */
@@ -259,9 +256,6 @@ tr.done {
 
 /* 라벨 스타일 */
 .date-filter-label {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
     white-space: nowrap;
     flex-shrink: 0;
     width: 100px; /* 라벨 고정 너비 */
@@ -291,6 +285,54 @@ tr.done {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
+/* 이름 검색 필터 컨테이너 */
+.name-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 라벨과 입력 필드 간격 */
+  margin-bottom: 10px;
+}
+
+/* 이름 검색 라벨 스타일 */
+.name-filter-label {
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: 100px; /* 라벨 고정 너비 */
+}
+
+/* 이름 검색 입력 필드 스타일 */
+.name-filter {
+  font-size: 14px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  color: #333333;
+  outline: none;
+  transition: all 0.3s ease;
+  width: 200px; /* 입력 필드 폭 */
+}
+
+/* 입력 필드 hover 효과 */
+.name-filter:hover {
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+/* 입력 필드 focus 효과 */
+.name-filter:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* 공통 라벨 스타일 */
+.filter-label {
+  color: #555555; /* 더 밝은 회색 */
+  font-size: 16px;
+  font-weight: bold;
+}
+
 
 @keyframes slide {
   0% {
