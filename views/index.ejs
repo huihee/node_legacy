@@ -17,6 +17,14 @@
                             <th>이메일</th>
                             <th>내용</th>
                             <th>상태</th>
+                                <div class="status-filter-wrapper">
+                                    <label for="status-filter" class="status-filter-label">상태별 조회 :</label>
+                                    <select id="status-filter" class="status-filter form-control" onchange="filterByStatus()">
+                                        <option value="">All</option>
+                                        <option value="done">Done</option>
+                                        <option value="ongoing">Ongoing</option>
+                                    </select>
+                                </div>
                             <th>생성일</th>
                             <th>수정일</th>
                             <th>삭제</th>
@@ -24,7 +32,7 @@
                     </thead>
                     <tbody>
                         <% lists.forEach(function(item) { %>
-                        <tr class="<%= item.status === 'done' ? 'done' : '' %>">
+                        <tr class="contact-row <%= item.status === 'done' ? 'done' : '' %>" data-status="<%= item.status %>">
                             <td class="center"><%= item.id %></td>
                             <td><%= item.name %></td>
                             <td><%= item.phone %></td>
@@ -81,5 +89,23 @@
         </div>
     </div>
 </div>
+
+<script>
+    function filterByStatus() {
+        const selectedStatus = document.getElementById('status-filter').value; // 선택된 상태 값
+        console.log("Selected Status:", selectedStatus); // 디버깅용 로그
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const rowStatus = row.getAttribute('data-status'); // 각 행의 상태 값
+            console.log("Row Status:", rowStatus); // 디버깅용 로그
+            if (!selectedStatus || rowStatus === selectedStatus) {
+                row.style.display = ''; // 선택된 상태와 일치하면 표시
+            } else {
+                row.style.display = 'none'; // 선택된 상태와 다르면 숨김
+            }
+        });
+    }
+
+</script>
+
 
 <%-include('layouts/footer.ejs')%>
