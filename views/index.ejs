@@ -8,6 +8,20 @@
     <div class="row slideanim">
         <div class="col-sm-12">
             <div class="panel-body">
+                <div class="filter-wrapper">
+                    <div class="status-filter-wrapper">
+                        <label for="status-filter" class="status-filter-label">상태 검색 :</label>
+                        <select id="status-filter" class="status-filter form-control" onchange="filterByStatus()" >
+                            <option value="">All</option>
+                            <option value="done">Done</option>
+                            <option value="ongoing">Ongoing</option>
+                        </select>
+                    </div>
+                    <div class="date-filter-wrapper">
+                        <label for="date-filter" class="date-filter-label">등록일 검색:</label>
+                        <input type="date" id="date-filter" class="date-filter" onchange="filterByDate()" >
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -17,14 +31,6 @@
                             <th>이메일</th>
                             <th>내용</th>
                             <th>상태</th>
-                                <div class="status-filter-wrapper">
-                                    <label for="status-filter" class="status-filter-label">상태별 조회 :</label>
-                                    <select id="status-filter" class="status-filter form-control" onchange="filterByStatus()">
-                                        <option value="">All</option>
-                                        <option value="done">Done</option>
-                                        <option value="ongoing">Ongoing</option>
-                                    </select>
-                                </div>
                             <th>생성일</th>
                             <th>수정일</th>
                             <th>삭제</th>
@@ -32,7 +38,7 @@
                     </thead>
                     <tbody>
                         <% lists.forEach(function(item) { %>
-                        <tr class="contact-row <%= item.status === 'done' ? 'done' : '' %>" data-status="<%= item.status %>">
+                            <tr class="contact-row <%= item.status === 'done' ? 'done' : '' %>" data-status="<%= item.status %>" data-date="<%= item.create_at %>">
                             <td class="center"><%= item.id %></td>
                             <td><%= item.name %></td>
                             <td><%= item.phone %></td>
@@ -93,7 +99,6 @@
 <script>
     function filterByStatus() {
         const selectedStatus = document.getElementById('status-filter').value; // 선택된 상태 값
-        console.log("Selected Status:", selectedStatus); // 디버깅용 로그
         document.querySelectorAll('.contact-row').forEach(row => {
             const rowStatus = row.getAttribute('data-status'); // 각 행의 상태 값
             console.log("Row Status:", rowStatus); // 디버깅용 로그
@@ -104,6 +109,19 @@
             }
         });
     }
+
+    function filterByDate() {
+        const selectedDate = document.getElementById('date-filter').value; // 선택된 날짜 값
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const rowDate = row.getAttribute('data-date'); // 각 행의 날짜 값
+            if (!selectedDate || rowDate === selectedDate) {
+                row.style.display = ''; // 선택된 날짜와 일치하면 표시
+            } else {
+                row.style.display = 'none'; // 선택된 날짜와 다르면 숨김
+            }
+        });
+    }
+
 
 </script>
 

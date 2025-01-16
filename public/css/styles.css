@@ -249,6 +249,49 @@ tr.done {
   color: #333;
 }
 
+/* 날짜 필터 전체 컨테이너 */
+.date-filter-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* 라벨과 입력 필드 간격 */
+    margin: 15px 0;
+}
+
+/* 라벨 스타일 */
+.date-filter-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    flex-shrink: 0;
+    width: 100px; /* 라벨 고정 너비 */
+}
+
+/* 날짜 선택기 스타일 */
+.date-filter {
+    font-size: 14px;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #333;
+    outline: none;
+    transition: all 0.3s ease;
+    width: 180px; /* 날짜 선택기 폭 */
+}
+
+/* 날짜 선택기 hover 효과 */
+.date-filter:hover {
+    border-color: #007bff;
+    background-color: #fff;
+}
+
+/* 날짜 선택기 focus 효과 */
+.date-filter:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
 @keyframes slide {
   0% {
     opacity: 0;
