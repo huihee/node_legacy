@@ -12,30 +12,35 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Memo</th>
-                            <th>Status</th>
-                            <th>Created At</th>
-                            <th>Modified At</th>
-                            <th>Actions</th>
+                            <th>이름</th>
+                            <th>전화번호</th>
+                            <th>이메일</th>
+                            <th>내용</th>
+                            <th>상태</th>
+                            <th>생성일</th>
+                            <th>수정일</th>
+                            <th>삭제</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% lists.forEach(function(item) { %>
-                        <tr>
-                            <td><%= item.id %></td>
+                        <tr class="<%= item.status === 'done' ? 'done' : '' %>">
+                            <td class="center"><%= item.id %></td>
                             <td><%= item.name %></td>
                             <td><%= item.phone %></td>
                             <td><%= item.email %></td>
                             <td><%= item.memo %></td>
-                            <td class="center"><%= item.status %></td>
+                            <td class="center">
+                                <% if (item.status === 'ongoing') { %>
+                                    <button class="btn btn-info" onclick="updateContact(<%= item.id %>)">Update</button>
+                                <% } else { %>
+                                    <%= item.status %>
+                                <% } %>
+                            </td>
                             <td class="center"><%= item.create_at %></td>
                             <td class="center"><%= item.modify_at %></td>
-
                             <td class="center">
-                                <button class="btn btn-info" onclick="updateContact(<%= item.id %>)">Update</button>
+                                <!--button class="btn btn-info" onclick="updateContact(<%= item.id %>)">Update</button-->
                                 <button class="btn btn-danger" onclick="deleteContact(<%= item.id %>)">Delete</button>
                             </td>
                         </tr>

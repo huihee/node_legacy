@@ -191,6 +191,10 @@ th {
   text-align: center; /* 가운데 정렬 */
 }
 
+tr.done {
+  background-color: #dceafc !important;
+}
+
 @keyframes slide {
   0% {
     opacity: 0;
