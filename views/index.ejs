@@ -8,34 +8,57 @@
     <div class="row slideanim">
         <div class="col-sm-12">
             <div class="panel-body">
+                <div class="filter-wrapper">
+                    <div class="name-filter-wrapper">
+                        <label for="name-filter" class="name-filter-label filter-label">이름 검색:</label>
+                        <input type="text" id="name-filter" class="name-filter" placeholder="이름 입력" oninput="filterByName()">
+                    </div>
+                    <div class="status-filter-wrapper">
+                        <label for="status-filter" class="status-filter-label filter-label">상태 검색:</label>
+                        <select id="status-filter" class="status-filter form-control" onchange="filterByStatus()" >
+                            <option value="">All</option>
+                            <option value="done">Done</option>
+                            <option value="ongoing">Ongoing</option>
+                        </select>
+                    </div>
+                    <div class="date-filter-wrapper">
+                        <label for="date-filter" class="date-filter-label filter-label">등록일 검색:</label>
+                        <input type="date" id="date-filter" class="date-filter" onchange="filterByDate()" >
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Memo</th>
-                            <th>Status</th>
-                            <th>Created At</th>
-                            <th>Modified At</th>
-                            <th>Actions</th>
+                            <th>이름</th>
+                            <th>전화번호</th>
+                            <th>이메일</th>
+                            <th>내용</th>
+                            <th>상태</th>
+                            <th>생성일</th>
+                            <th>수정일</th>
+                            <th>삭제</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% lists.forEach(function(item) { %>
-                        <tr>
-                            <td><%= item.id %></td>
+                            <tr class="contact-row <%= item.status === 'done' ? 'done' : '' %>" data-status="<%= item.status %>" data-date="<%= item.create_at %>">
+                            <td class="center"><%= item.id %></td>
                             <td><%= item.name %></td>
                             <td><%= item.phone %></td>
                             <td><%= item.email %></td>
                             <td><%= item.memo %></td>
-                            <td class="center"><%= item.status %></td>
+                            <td class="center">
+                                <% if (item.status === 'ongoing') { %>
+                                    <button class="btn btn-info" onclick="updateContact(<%= item.id %>)">Update</button>
+                                <% } else { %>
+                                    <%= item.status %>
+                                <% } %>
+                            </td>
                             <td class="center"><%= item.create_at %></td>
                             <td class="center"><%= item.modify_at %></td>
-
                             <td class="center">
-                                <button class="btn btn-info" onclick="updateContact(<%= item.id %>)">Update</button>
+                                <!--button class="btn btn-info" onclick="updateContact(<%= item.id %>)">Update</button-->
                                 <button class="btn btn-danger" onclick="deleteContact(<%= item.id %>)">Delete</button>
                             </td>
                         </tr>
@@ -76,5 +99,48 @@
         </div>
     </div>
 </div>
+
+<script>
+    function filterByStatus() {
+        const selectedStatus = document.getElementById('status-filter').value; // 선택된 상태 값
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const rowStatus = row.getAttribute('data-status'); // 각 행의 상태 값
+            console.log("Row Status:", rowStatus); // 디버깅용 로그
+            if (!selectedStatus || rowStatus === selectedStatus) {
+                row.style.display = ''; // 선택된 상태와 일치하면 표시
+            } else {
+                row.style.display = 'none'; // 선택된 상태와 다르면 숨김
+            }
+        });
+    }
+
+    function filterByDate() {
+        const selectedDate = document.getElementById('date-filter').value; // 선택된 날짜 값
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const rowDate = row.getAttribute('data-date'); // 각 행의 날짜 값
+            if (!selectedDate || rowDate === selectedDate) {
+                row.style.display = ''; // 선택된 날짜와 일치하면 표시
+            } else {
+                row.style.display = 'none'; // 선택된 날짜와 다르면 숨김
+            }
+        });
+    }
+
+    function filterByName() {
+        const input = document.getElementById('name-filter').value.toLowerCase(); // 입력 값을 소문자로 변환
+        console.log("Search Name:", input); // 디버깅용 로그
+
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase(); // 이름 열의 텍스트 가져오기
+            if (name.includes(input)) {
+                row.style.display = ''; // 입력 값이 포함된 행은 표시
+            } else {
+                row.style.display = 'none'; // 포함되지 않은 행은 숨김
+            }
+        });
+    }
+
+</script>
+
 
 <%-include('layouts/footer.ejs')%>
