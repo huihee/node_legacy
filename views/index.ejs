@@ -146,26 +146,25 @@
     const rowsPerPage = 10; // 페이지당 표시할 행 수
 
     function displayTablePage(page) {
-        const rows = document.querySelectorAll('.contact-row');
-        const totalRows = rows.length;
+        const allRows = document.querySelectorAll('.contact-row');
+        const filteredRows = Array.from(allRows).filter(row => row.getAttribute('data-visible') === 'true');
+        const totalRows = filteredRows.length;
         const totalPages = Math.ceil(totalRows / rowsPerPage);
 
-        // 행 숨기기
-        rows.forEach((row, index) => {
+        allRows.forEach(row => row.style.display = 'none'); // 모든 행 숨기기
+
+        filteredRows.forEach((row, index) => {
             if (index >= (page - 1) * rowsPerPage && index < page * rowsPerPage) {
                 row.style.display = '';
-            } else {
-                row.style.display = 'none';
             }
         });
 
-        // 페이지네이션 버튼 업데이트
         updatePaginationButtons(totalPages, page);
     }
 
     function updatePaginationButtons(totalPages, activePage) {
         const paginationWrapper = document.getElementById('pagination');
-        paginationWrapper.innerHTML = ''; // 기존 버튼 제거
+        paginationWrapper.innerHTML = '';
 
         for (let i = 1; i <= totalPages; i++) {
             const button = document.createElement('button');
@@ -174,13 +173,61 @@
             button.onclick = () => {
                 currentPage = i;
                 displayTablePage(currentPage);
+                reattachUpdateEvents(); // 페이지 변경 후 이벤트 다시 연결
             };
             paginationWrapper.appendChild(button);
         }
     }
 
+    function applyFilters() {
+        const selectedStatus = document.getElementById('status-filter').value;
+        const selectedDate = document.getElementById('date-filter').value;
+        const inputName = document.getElementById('name-filter').value.toLowerCase();
+
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            const rowDate = row.getAttribute('data-date');
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+            const matchesStatus = !selectedStatus || rowStatus === selectedStatus;
+            const matchesDate = !selectedDate || rowDate === selectedDate;
+            const matchesName = name.includes(inputName);
+
+            if (matchesStatus && matchesDate && matchesName) {
+                row.setAttribute('data-visible', 'true');
+            } else {
+                row.setAttribute('data-visible', 'false');
+            }
+        });
+
+        displayTablePage(currentPage); // 현재 페이지 유지
+        reattachUpdateEvents(); // 필터 적용 후 이벤트 다시 연결
+    }
+
+    function reattachUpdateEvents() {
+        document.querySelectorAll('.contact-row .btn-info').forEach(button => {
+            button.removeEventListener('click', handleUpdateEvent); // 기존 이벤트 제거
+            button.addEventListener('click', handleUpdateEvent); // 새 이벤트 추가
+        });
+    }
+
+    function handleUpdateEvent(event) {
+        const id = event.target.closest('tr').querySelector('td').textContent.trim();
+    }
+
+    // 필터 이벤트 연결
+    document.getElementById('status-filter').onchange = applyFilters;
+    document.getElementById('date-filter').onchange = applyFilters;
+    document.getElementById('name-filter').oninput = applyFilters;
+
+    // 초기 모든 행을 visible로 설정
+    document.querySelectorAll('.contact-row').forEach(row => row.setAttribute('data-visible', 'true'));
+
     // 초기 로드 시 첫 페이지 표시
     displayTablePage(currentPage);
+
+    // 초기 이벤트 연결
+    reattachUpdateEvents();
 
 </script>
 
