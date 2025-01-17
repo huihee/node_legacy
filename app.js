@@ -2,8 +2,6 @@
 const express = require('express')
 const ejs = require('ejs')
 const bodyParser = require('body-parser');
-const mysql = require('mysql2')
-require('dotenv').config();
 const app = express()
 const port = 3000
 
@@ -15,30 +13,6 @@ app.use(express.static(__dirname+'/public'))
 app.use(bodyParser.urlencoded({ extended: false })) // bodyParser가 해당 형식을 파싱해줌
 // parsing JSON
 app.use(bodyParser.json()) // bodyParser가 해당 형식을 파싱해줌
-
-
-// MySQL Connection Pool - db 관련 정보는 push 절대 금지에 유의(dotenv사용)
-// MySQL 커넥션을 사용할 때는, 주로 커넥션 풀을 이용하여 관리하는 것이 권장된다.
-const connectionPool = mysql.createPool({
-    host: process.env.DB_HOST, // 로컬에 구축했기 때문에
-    user: process.env.DB_USER, // root로 접속
-    password: process.env.DB_PW,
-    port : process.env.DB_PORT, // mysql 설치시 설정된 포트
-    database: process.env.DB_NAME,
-    connectionLimit: 10, // 최대 연결 수 설정(필요시)
-    insecureAuth: true,
-});
-
-// MySQL connection check
-connectionPool.getConnection((err, connection) => {
-    if (err) {
-        console.error('MySQL 연결 중 에러 발생: ', err);
-    } else {
-        console.log('MySQL에 연결되었습니다.');
-        connection.release();
-    }
-});
-
 
 app.get('/', (req, res) => {
     const selectQuery = `SELECT id,
@@ -63,21 +37,11 @@ app.get('/', (req, res) => {
       }
     });
   });
-  
-
-app.get('/blog', (req, res) => { 
-    res.render('blog.ejs');
-})
-
-app.get('/users', (req, res) => { 
-    res.render('users');
-})
 
 // 뷰 페이지를 렌더링 하는 렌더링 설정, 라우터 함수 작성
 app.get('/contact', (req, res) => { 
     res.render('contact');
 })
-
 
 // post 설정
 app.post('/api/contact', (req, res) => {
