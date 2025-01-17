@@ -2,8 +2,6 @@
 const express = require('express')
 const ejs = require('ejs')
 const bodyParser = require('body-parser');
-const mysql = require('mysql2')
-require('dotenv').config();
 const app = express()
 const port = 3000
 
@@ -16,47 +14,34 @@ app.use(bodyParser.urlencoded({ extended: false })) // bodyParser가 해당 형�
 // parsing JSON
 app.use(bodyParser.json()) // bodyParser가 해당 형식을 파싱해줌
 
-
-// MySQL Connection Pool - db 관련 정보는 push 절대 금지에 유의(dotenv사용)
-// MySQL 커넥션을 사용할 때는, 주로 커넥션 풀을 이용하여 관리하는 것이 권장된다.
-const connectionPool = mysql.createPool({
-    host: process.env.DB_HOST, // 로컬에 구축했기 때문에
-    user: process.env.DB_USER, // root로 접속
-    password: process.env.DB_PW,
-    port : process.env.DB_PORT, // mysql 설치시 설정된 포트
-    database: process.env.DB_NAME,
-    connectionLimit: 10, // 최대 연결 수 설정(필요시)
-    insecureAuth: true,
-});
-
-// MySQL connection check
-connectionPool.getConnection((err, connection) => {
-    if (err) {
-        console.error('MySQL 연결 중 에러 발생: ', err);
-    } else {
-        console.log('MySQL에 연결되었습니다.');
-        connection.release();
-    }
-});
-
-
-app.get('/', (req, res) => { 
-    res.render('index'); 
-})
-
-app.get('/blog', (req, res) => { 
-    res.render('blog.ejs');
-})
-
-app.get('/users', (req, res) => { 
-    res.render('users');
-})
+app.get('/', (req, res) => {
+    const selectQuery = `SELECT id,
+                                name,
+                                phone,
+                                email,
+                                memo,
+                                DATE_FORMAT(create_at, '%Y-%m-%d') AS create_at,
+                                DATE_FORMAT(modify_at, '%Y-%m-%d') AS modify_at,
+                                status 
+                            FROM contact 
+                            ORDER BY ID DESC`;
+  
+    connectionPool.query(selectQuery, (err, result) => {
+      if (err) {
+        console.error('데이터 조회 중 에러 발생', err);
+        res.status(500).send('내부 서버 오류');
+      } else {
+        console.log('데이터가 조회되었습니다.');
+        // 'index.ejs'로 데이터 전달
+        res.render('index', { lists: result });
+      }
+    });
+  });
 
 // 뷰 페이지를 렌더링 하는 렌더링 설정, 라우터 함수 작성
 app.get('/contact', (req, res) => { 
     res.render('contact');
 })
-
 
 // post 설정
 app.post('/api/contact', (req, res) => {
@@ -83,9 +68,18 @@ app.post('/api/contact', (req, res) => {
 
 // 조회
 app.get('/contactList', (req, res) => {
-   const selectQuery = `SELECT * FROM contact ORDER BY ID DESC`
+    const selectQuery = `SELECT id,
+                                name,
+                                phone,
+                                email,
+                                memo,
+                                DATE_FORMAT(create_at, '%Y-%m-%d') AS create_at,
+                                DATE_FORMAT(modify_at, '%Y-%m-%d') AS modify_at,
+                                status 
+                            FROM contact 
+                            ORDER BY ID DESC`;
 
-   connectionPool.query(selectQuery, (err, result) => {
+    connectionPool.query(selectQuery, (err, result) => {
         if (err) {
             console.error('데이터 조회 중 에러 발생', err)
             res.status(500).send('내부 서버 오류')
@@ -97,7 +91,7 @@ app.get('/contactList', (req, res) => {
     })
 });
 
-app.post('/api/contactDelete/:id', (req, res) => {
+app.delete('/api/contactDelete/:id', (req, res) => {
     const id = req.params.id;
     const deleteQuery = `DELETE FROM contact WHERE ID='${id}'`
     connectionPool.query(deleteQuery, (err, result) => {
@@ -112,7 +106,7 @@ app.post('/api/contactDelete/:id', (req, res) => {
     })
 })
 
-app.post('/api/contactUpdate/:id', (req, res) => {
+app.put('/api/contactUpdate/:id', (req, res) => {
     const id = req.params.id;
     const status = "done";
     const updateQuery = `UPDATE contact SET status='${status}' WHERE id='${id}'`
