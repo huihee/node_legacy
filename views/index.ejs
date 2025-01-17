@@ -1,8 +1,235 @@
-<!-- Shift + Art + F : 코드정렬 -->
 <%-include('layouts/header.ejs')%>
 
-    <h2>메인페이지 입니다.</h2>
-    <!-- app.js에서 __dirname+'/public' 라고 지정을 했기 때문에 -->
-    <img src="/image/image.png"> 
+<!-- List Section -->
+<div id="list" class="container-fluid">
+    <div class="text-center">
+        <h2>Contact List</h2>
+    </div>
+    <div class="row slideanim">
+        <div class="col-sm-12">
+            <div class="panel-body">
+                <div class="filter-wrapper">
+                    <div class="name-filter-wrapper">
+                        <label for="name-filter" class="name-filter-label filter-label">이름 검색:</label>
+                        <input type="text" id="name-filter" class="name-filter" placeholder="이름 입력" oninput="filterByName()">
+                    </div>
+                    <div class="status-filter-wrapper">
+                        <label for="status-filter" class="status-filter-label filter-label">상태 검색:</label>
+                        <select id="status-filter" class="status-filter form-control" onchange="filterByStatus()" >
+                            <option value="">All</option>
+                            <option value="done">Done</option>
+                            <option value="ongoing">Ongoing</option>
+                        </select>
+                    </div>
+                    <div class="date-filter-wrapper">
+                        <label for="date-filter" class="date-filter-label filter-label">등록일 검색:</label>
+                        <input type="date" id="date-filter" class="date-filter" onchange="filterByDate()" >
+                    </div>
+                </div>
+                <br>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>이름</th>
+                            <th>전화번호</th>
+                            <th>이메일</th>
+                            <th>내용</th>
+                            <th>상태</th>
+                            <th>생성일</th>
+                            <th>수정일</th>
+                            <th>삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% lists.forEach(function(item) { %>
+                            <tr class="contact-row <%= item.status === 'done' ? 'done' : '' %>" data-status="<%= item.status %>" data-date="<%= item.create_at %>">
+                            <td class="center"><%= item.id %></td>
+                            <td><%= item.name %></td>
+                            <td><%= item.phone %></td>
+                            <td><%= item.email %></td>
+                            <td><%= item.memo %></td>
+                            <td class="center">
+                                <% if (item.status === 'ongoing') { %>
+                                    <button class="btn btn-info" onclick="updateContact(<%= item.id %>)">Update</button>
+                                <% } else { %>
+                                    <%= item.status %>
+                                <% } %>
+                            </td>
+                            <td class="center"><%= item.create_at %></td>
+                            <td class="center"><%= item.modify_at %></td>
+                            <td class="center">
+                                <!--button class="btn btn-info" onclick="updateContact(<%= item.id %>)">Update</button-->
+                                <button class="btn btn-danger" onclick="deleteContact(<%= item.id %>)">Delete</button>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                <div id="pagination" class="pagination-wrapper"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Section -->
+<div id="contact" class="container-fluid bg-grey">
+    <h2 class="text-center">Contact Me</h2>
+    <div class="row">
+        <div class="col-sm-5">
+            <p>Feel free to reach out for any inquiries.</p>
+            <p><span class="glyphicon glyphicon-map-marker"></span> Sejong, Jochiwon</p>
+            <p><span class="glyphicon glyphicon-phone"></span> +82 10-2345-6789</p>
+            <p><span class="glyphicon glyphicon-envelope"></span> huihee@g.hongik.ac.kr</p>
+        </div>
+        <div class="col-sm-7 slideanim">
+            <form id="contactForm">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" id="comments" name="memo" placeholder="Comments" rows="5"></textarea>
+                </div>
+                <button type="submit" class="btn btn-default pull-right" onclick="createContact()">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterByStatus() {
+        const selectedStatus = document.getElementById('status-filter').value; // 선택된 상태 값
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const rowStatus = row.getAttribute('data-status'); // 각 행의 상태 값
+            console.log("Row Status:", rowStatus); // 디버깅용 로그
+            if (!selectedStatus || rowStatus === selectedStatus) {
+                row.style.display = ''; // 선택된 상태와 일치하면 표시
+            } else {
+                row.style.display = 'none'; // 선택된 상태와 다르면 숨김
+            }
+        });
+    }
+
+    function filterByDate() {
+        const selectedDate = document.getElementById('date-filter').value; // 선택된 날짜 값
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const rowDate = row.getAttribute('data-date'); // 각 행의 날짜 값
+            if (!selectedDate || rowDate === selectedDate) {
+                row.style.display = ''; // 선택된 날짜와 일치하면 표시
+            } else {
+                row.style.display = 'none'; // 선택된 날짜와 다르면 숨김
+            }
+        });
+    }
+
+    function filterByName() {
+        const input = document.getElementById('name-filter').value.toLowerCase(); // 입력 값을 소문자로 변환
+        console.log("Search Name:", input); // 디버깅용 로그
+
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase(); // 이름 열의 텍스트 가져오기
+            if (name.includes(input)) {
+                row.style.display = ''; // 입력 값이 포함된 행은 표시
+            } else {
+                row.style.display = 'none'; // 포함되지 않은 행은 숨김
+            }
+        });
+    }
+
+    let currentPage = 1; // 현재 페이지
+    const rowsPerPage = 10; // 페이지당 표시할 행 수
+
+    function displayTablePage(page) {
+        const allRows = document.querySelectorAll('.contact-row');
+        const filteredRows = Array.from(allRows).filter(row => row.getAttribute('data-visible') === 'true');
+        const totalRows = filteredRows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        allRows.forEach(row => row.style.display = 'none'); // 모든 행 숨기기
+
+        filteredRows.forEach((row, index) => {
+            if (index >= (page - 1) * rowsPerPage && index < page * rowsPerPage) {
+                row.style.display = '';
+            }
+        });
+
+        updatePaginationButtons(totalPages, page);
+    }
+
+    function updatePaginationButtons(totalPages, activePage) {
+        const paginationWrapper = document.getElementById('pagination');
+        paginationWrapper.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.className = activePage === i ? 'active' : '';
+            button.onclick = () => {
+                currentPage = i;
+                displayTablePage(currentPage);
+                reattachUpdateEvents(); // 페이지 변경 후 이벤트 다시 연결
+            };
+            paginationWrapper.appendChild(button);
+        }
+    }
+
+    function applyFilters() {
+        const selectedStatus = document.getElementById('status-filter').value;
+        const selectedDate = document.getElementById('date-filter').value;
+        const inputName = document.getElementById('name-filter').value.toLowerCase();
+
+        document.querySelectorAll('.contact-row').forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            const rowDate = row.getAttribute('data-date');
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+            const matchesStatus = !selectedStatus || rowStatus === selectedStatus;
+            const matchesDate = !selectedDate || rowDate === selectedDate;
+            const matchesName = name.includes(inputName);
+
+            if (matchesStatus && matchesDate && matchesName) {
+                row.setAttribute('data-visible', 'true');
+            } else {
+                row.setAttribute('data-visible', 'false');
+            }
+        });
+
+        displayTablePage(currentPage); // 현재 페이지 유지
+        reattachUpdateEvents(); // 필터 적용 후 이벤트 다시 연결
+    }
+
+    function reattachUpdateEvents() {
+        document.querySelectorAll('.contact-row .btn-info').forEach(button => {
+            button.removeEventListener('click', handleUpdateEvent); // 기존 이벤트 제거
+            button.addEventListener('click', handleUpdateEvent); // 새 이벤트 추가
+        });
+    }
+
+    function handleUpdateEvent(event) {
+        const id = event.target.closest('tr').querySelector('td').textContent.trim();
+    }
+
+    // 필터 이벤트 연결
+    document.getElementById('status-filter').onchange = applyFilters;
+    document.getElementById('date-filter').onchange = applyFilters;
+    document.getElementById('name-filter').oninput = applyFilters;
+
+    // 초기 모든 행을 visible로 설정
+    document.querySelectorAll('.contact-row').forEach(row => row.setAttribute('data-visible', 'true'));
+
+    // 초기 로드 시 첫 페이지 표시
+    displayTablePage(currentPage);
+
+    // 초기 이벤트 연결
+    reattachUpdateEvents();
+
+</script>
+
 
 <%-include('layouts/footer.ejs')%>
